@@ -12,7 +12,6 @@ plan skip_all => "TeX::Hyphen required for testing compatibility" if $@;
 # diag() fails with wide character warnings which we don't care about
 #use Test::NoWarnings;
 
-use TeX::Hyphen;
 use TeX::Hyphen::Pattern;
 my $thp    = TeX::Hyphen::Pattern->new();
 my @labels = map { s/.*:://; $_ } $thp->available;

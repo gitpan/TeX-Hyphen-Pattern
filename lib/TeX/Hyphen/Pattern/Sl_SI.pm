@@ -18,7 +18,7 @@ use warnings;
 use 5.006000;
 use utf8;
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 my $pattern_file = q{};
 while (<DATA>) {

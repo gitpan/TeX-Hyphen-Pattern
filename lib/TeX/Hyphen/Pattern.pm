@@ -12,7 +12,7 @@ use warnings;
 use 5.006000;
 use utf8;
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 use Log::Log4perl qw(:easy get_logger);
 use Set::Scalar;
@@ -171,7 +171,7 @@ patterns for use with TeX::Hyphen.
 
 =head1 VERSION
 
-This is version 0.02. To prevent plugging in of incompatible modules the
+This is version 0.03. To prevent plugging in of incompatible modules the
 version of the pluggable modules must be the same as this module.
 
 =head1 SYNOPSIS
@@ -254,7 +254,7 @@ Not all available pattern files are parsed correctly by L<TeX::Hyphen>.
 Versions up to and including 0.140 don't support C<utf8>, so patterns using
 C<utf8> that are included in this package have a version number 0.00 to ignore
 them. Should you patch L<TeX::Hyphen> yourself by inserting a C<binmode FILE,
-":utf8";> you can change those version numbers to 0.02 to include them.
+":utf8";> you can change those version numbers to 0.03 to include them.
 
 =back
 

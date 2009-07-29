@@ -1,4 +1,4 @@
-TeX-Hyphen-Pattern version 0.02
+TeX-Hyphen-Pattern version 0.03
 
 This module can be used to provide TeX hyphenation patterns for use with
 TeX::Hyphen.
