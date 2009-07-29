@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:               TeX-Hyphen-Pattern
-version:            0.01
+version:            0.02
 abstract:           class for providing a collection of TeX hyphenation
 author:
     - Roland van Ipenburg <ipenburg@xs4all.nl>
@@ -9,7 +9,6 @@ distribution_type:  module
 configure_requires:
     ExtUtils::MakeMaker:  0
 requires:
-    Carp:                 0
     Class::Meta::Express:  0
     Encode:               0
     File::Temp:           0
@@ -17,7 +16,8 @@ requires:
     Module::Pluggable:    0
     Readonly:             0
     Set::Scalar:          0
-    Test::More:           0
+    Test::More:           0.81
+    Test::NoWarnings:     0
     version:              0
 no_index:
     directory:

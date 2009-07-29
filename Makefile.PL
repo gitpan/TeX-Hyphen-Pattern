@@ -8,7 +8,6 @@ WriteMakefile(
     VERSION_FROM => 'lib/TeX/Hyphen/Pattern.pm',
     PL_FILES     => {},
     PREREQ_PM    => {
-        'Carp'                 => 0,
         'Class::Meta::Express' => 0,
         'Encode'               => 0,
         'File::Temp'           => 0,
@@ -16,7 +15,8 @@ WriteMakefile(
         'Module::Pluggable'    => 0,
         'Readonly'             => 0,
         'Set::Scalar'          => 0,
-        'Test::More'           => 0,
+        'Test::More'           => 0.81,
+        'Test::NoWarnings'     => 0,
         'version'              => 0,
     },
     dist  => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },

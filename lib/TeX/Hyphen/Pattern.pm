@@ -12,11 +12,10 @@ use warnings;
 use 5.006000;
 use utf8;
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 use Log::Log4perl qw(:easy get_logger);
 use Set::Scalar;
-use Carp qw(carp);
 use Encode;
 use Class::Meta::Express qw(class ctor has meta method);
 use Module::Pluggable
@@ -103,7 +102,7 @@ class {
         binmode $fh, $UTF8;
         $fh->unlink_on_destroy(0);
         print {$fh} $patterns
-          or carp sprintf $ERR_CANT_WRITE, ( $fh->filename, $! );
+          or $log->logdie(sprintf $ERR_CANT_WRITE, ( $fh->filename, $! ) );
         my %cache = %{ $self->_cache };
         $cache{ $self->label } = $fh->filename;
         $self->_cache( {%cache} );
@@ -172,7 +171,7 @@ patterns for use with TeX::Hyphen.
 
 =head1 VERSION
 
-This is version 0.01. To prevent plugging in of incompatible modules the
+This is version 0.02. To prevent plugging in of incompatible modules the
 version of the pluggable modules must be the same as this module.
 
 =head1 SYNOPSIS
@@ -180,16 +179,17 @@ version of the pluggable modules must be the same as this module.
     use TeX::Hyphen;
     use TeX::Hyphen::Pattern;
 
-	$pat = TeX::Hyphen::Pattern->new();
-	$pat->label('Sh_ltn'); # Serbocroatian hyphenation patterns
-	$hyph = TeX::Hyphen->new($pat->filename);
+    $pat = TeX::Hyphen::Pattern->new();
+    $pat->label('Sh_ltn'); # Serbocroatian hyphenation patterns
+    $hyph = TeX::Hyphen->new($pat->filename);
 
 =head1 DESCRIPTION
 
 The L<TeX::Hyphen> module parses TeX files containing hyphenation patterns for
 use with TeX based systems. This module includes TeX hyphenation files from
-L<CTAN> and hyphenation patterns from L<OpenOffice.org> and provides a single
-interface to use them in L<TeX::Hyphen>.
+L<http://www.ctan.org> and hyphenation patterns from
+L<http://www.openoffice.org> and provides a single interface to use them in
+L<TeX::Hyphen>.
 
 =over 4
 
@@ -204,21 +204,24 @@ interface to use them in L<TeX::Hyphen>.
 =over 4
 
 =item TeX::Hyphen::Pattern-E<gt>new();
+
 =item TeX::Hyphen::Pattern-E<gt>new(label => $label);
 
 Constructs a new TeX::Hyphen::Pattern object.
 
 =item $pattern-E<gt>label($label);
 
-Sets the label that determines the pattern to use.
+Sets the label that determines the pattern to use. The label can be a simple
+language code, but since some languages can use multiple scripts with
+different hyphenation rules we talk about patterns and not just languages.
 
 =item $pattern-E<gt>available();
 
-Lists the available patterns.
+Returns a list of the available patterns.
 
 =item $pattern-E<gt>filename();
 
-Return the name of a temporary file that TeX::Hyphen can read it's pattern
+Returns the name of a temporary file that TeX::Hyphen can read it's pattern
 from for the current label. Returns undef if no pattern language matching the
 label was found.
 
@@ -233,15 +236,15 @@ distribution complies with them.
 
 =head1 DEPENDENCIES
 
-	L<Carp>
-	L<Class::Meta::Express>
-	L<Encode>
-	L<File::Temp>
-	L<Log::Log4perl>
-	L<Module::Pluggable>
-	L<Readonly>
-	L<Set::Scalar>
-	L<Test::More>
+L<Class::Meta::Express>
+L<Encode>
+L<File::Temp>
+L<Log::Log4perl>
+L<Module::Pluggable>
+L<Readonly>
+L<Set::Scalar>
+L<Test::More>
+L<Test::NoWarnings>
 
 =head1 INCOMPATIBILITIES
 
@@ -251,19 +254,20 @@ Not all available pattern files are parsed correctly by L<TeX::Hyphen>.
 Versions up to and including 0.140 don't support C<utf8>, so patterns using
 C<utf8> that are included in this package have a version number 0.00 to ignore
 them. Should you patch L<TeX::Hyphen> yourself by inserting a C<binmode FILE,
-":utf8";> you can change those version numbers to 0.01 to include them.
+":utf8";> you can change those version numbers to 0.02 to include them.
 
 =back
 
 =head1 DIAGNOSTICS
 
-This module uses Log::Log4perl.
+This module uses L<Log::Log4perl> for logging. It's a fatal error when the
+temporary file containing the pattern can't be written.
 
 =over
 
 =item C<Can't write to file '%s', stopped %s>
 
-The temporary file created by File::Temp could not be written.
+The temporary file created by L<File::Temp> could not be written.
 
 =back
 
@@ -285,17 +289,18 @@ issue. The empty subclass can't be empty, it needs at least:
 match on the string and picks what partly matches sorted, so using more exotic
 scripts this can go wrong badly.
 
-=item * Traditional German (L<De_1901.pm>), Reformed German (L<De_1996.pm>)
-and Swiss German (L<De_ch_1901.pm>) fail for some reason and are not included
-in the package.
+=item * Traditional German (L<TeX::Hyphen::Pattern::De_1901.pm>), Reformed
+German (L<TeX::Hyphen::Pattern::De_1996.pm>) and Swiss German
+(L<TeX::Hyphen::Pattern::De_ch_1901.pm>) fail for some reason and are not
+included in the package.
 
-=item * Hungarian (L<Hu.pm>) fails for some reason and is not included in the
+=item * Hungarian (L<TeX::Hyphen::Pattern::Hu.pm>) fails for some reason and is not included in the
 package.
 
-=item * Esperanto (L<Eo.pm>) fails for some reason and is not included in the
+=item * Esperanto (L<TeX::Hyphen::Pattern::Eo.pm>) fails for some reason and is not included in the
 package.
 
-=item * Coptic (L<Cop.pm>) is a bit hard to test without a system that
+=item * Coptic (L<TeX::Hyphen::Pattern::Cop.pm>) is a bit hard to test without a system that
 supports the fonts or encoding and is not included in the package.
 
 =item * Building the catalog creates conflicting files on filesystems where
