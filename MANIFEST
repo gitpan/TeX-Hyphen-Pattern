@@ -24,6 +24,9 @@ lib/TeX/Hyphen/Pattern/Ca.pm
 lib/TeX/Hyphen/Pattern/Cs.pm
 lib/TeX/Hyphen/Pattern/Cy.pm
 lib/TeX/Hyphen/Pattern/Da.pm
+lib/TeX/Hyphen/Pattern/De_1901.pm
+lib/TeX/Hyphen/Pattern/De_1996.pm
+lib/TeX/Hyphen/Pattern/De_ch_1901.pm
 lib/TeX/Hyphen/Pattern/El_monoton.pm
 lib/TeX/Hyphen/Pattern/El_polyton.pm
 lib/TeX/Hyphen/Pattern/En_gb.pm
@@ -37,6 +40,7 @@ lib/TeX/Hyphen/Pattern/Ga.pm
 lib/TeX/Hyphen/Pattern/Gl.pm
 lib/TeX/Hyphen/Pattern/Grc.pm
 lib/TeX/Hyphen/Pattern/Hr.pm
+lib/TeX/Hyphen/Pattern/Hu.pm
 lib/TeX/Hyphen/Pattern/Hsb.pm
 lib/TeX/Hyphen/Pattern/Ia.pm
 lib/TeX/Hyphen/Pattern/Id.pm

@@ -1,7 +1,7 @@
-# $Id: 00_base.t 34 2008-12-07 06:47:25Z roland $
-# $Revision: 34 $
-# $HeadURL: svn+ssh://ipenburg.xs4all.nl/srv/svnroot/debbie/trunk/Date-Extract-P800Picture/t/00_base.t $
-# $Date: 2008-12-07 07:47:25 +0100 (Sun, 07 Dec 2008) $
+# $Id: 00_signature.t 102 2009-07-30 14:48:55Z roland $
+# $Revision: 102 $
+# $HeadURL: svn+ssh://ipenburg.xs4all.nl/srv/svnroot/rhonda/trunk/TeX-Hyphen-Pattern/t/00_signature.t $
+# $Date: 2009-07-30 16:48:55 +0200 (Thu, 30 Jul 2009) $
 
 use Test::More;
 

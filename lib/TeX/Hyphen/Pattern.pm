@@ -3,17 +3,18 @@ use strict;
 use warnings;
 
 ## no critic qw(ProhibitLongLines)
-# $Id: P800Picture.pm 50 2009-01-31 09:22:52Z roland $
-# $Revision: 50 $
-# $HeadURL: svn+ssh://ipenburg.xs4all.nl/srv/svnroot/debbie/trunk/Date-Extract-P800Picture/lib/Date/Extract/P800Picture.pm $
-# $Date: 2009-01-31 10:22:52 +0100 (Sat, 31 Jan 2009) $
+# $Id: Pattern.pm 121 2009-08-17 07:08:57Z roland $
+# $Revision: 121 $
+# $HeadURL: svn+ssh://ipenburg.xs4all.nl/srv/svnroot/rhonda/trunk/TeX-Hyphen-Pattern/lib/TeX/Hyphen/Pattern.pm $
+# $Date: 2009-08-17 09:08:57 +0200 (Mon, 17 Aug 2009) $
 ## use critic
 
 use 5.006000;
 use utf8;
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
+use English '-no_match_vars';
 use Log::Log4perl qw(:easy get_logger);
 use Set::Scalar;
 use Encode;
@@ -36,6 +37,8 @@ Readonly::Scalar my $PLUGGABLE          => q{TeX::Hyphen::Pattern::};
 Readonly::Scalar my $TEX_PATTERN_START  => qq@\\patterns{\n\#@;
 Readonly::Scalar my $TEX_PATTERN_FINISH => qq@\n}@;
 Readonly::Scalar my $TEX_INPUT_COMMAND  => q{\\\input\s+hyph-(.*?)\.tex};
+Readonly::Scalar my $TEX_MESSAGE        => q{\\\message};
+Readonly::Scalar my $TEX_COMMENT        => q{%};
 
 Readonly::Scalar my $ERR_CANT_WRITE => q{Can't write to file '%s', stopped %s};
 
@@ -51,9 +54,15 @@ Readonly::Scalar my $LOG_CACHE_MISS       => q{Cache miss for '%s'};
 Readonly::Scalar my $LOG_FILE_UNDEF       => q{Returning undef file for '%s'};
 Readonly::Scalar my $LOG_PATCH_OPENOFFICE => q{Patching OpenOffice.org pattern};
 Readonly::Scalar my $LOG_PATCH_TEX_INPUT => q{Patching TeX pattern with \input};
-Readonly::Scalar my $LOG_DELETING        => q{Deleting %d temporary files %s};
+Readonly::Scalar my $LOG_PATCH_CARONS    => q{Patching "x encoded carons};
+Readonly::Scalar my $LOG_PATCH_TEX_MESSAGE =>
+  q{Patching TeX pattern with \message};
+Readonly::Scalar my $LOG_DELETING    => q{Deleting %d temporary files %s};
 Readonly::Scalar my $LOG_DELETE_FAIL => q{Could not delete all temporary files};
 Readonly::Scalar my $LOG_DELETE_SUCCES => q{Deleted all temporary files};
+## no critic qw(CodeLayout::RequireASCII)
+Readonly::Hash my %CARON_MAP =>
+  ( q{"c} => q{č}, q{"s} => q{š}, q{"z} => q{ž} );
 ## use critic
 
 Log::Log4perl->easy_init($ERROR);
@@ -92,6 +101,18 @@ class {
             $patterns =~ s/$TEX_INPUT_COMMAND/$input_patterns/xmgis;
         }
 
+        # Take care of "x encoded carons:
+        if ( $patterns =~ /"[csz]/xmgis ) {
+            $log->debug($LOG_PATCH_CARONS);
+            $patterns =~ s{("[csz])}{$CARON_MAP{$1}}xmgis;
+        }
+
+        # Take care of \message command in TeX that TeX::Hyphen can't handle:
+        if ( $patterns =~ /^$TEX_MESSAGE/xmgis ) {
+            $log->debug($LOG_PATCH_TEX_MESSAGE);
+            $patterns =~ s{^($TEX_MESSAGE)}{$TEX_COMMENT$1}xmgis;
+        }
+
         # Patch OpenOffice.org pattern data for TeX::Hyphen:
         if ( $patterns !~ /\\patterns/xmgis ) {
             $log->debug($LOG_PATCH_OPENOFFICE);
@@ -102,7 +123,7 @@ class {
         binmode $fh, $UTF8;
         $fh->unlink_on_destroy(0);
         print {$fh} $patterns
-          or $log->logdie(sprintf $ERR_CANT_WRITE, ( $fh->filename, $! ) );
+          or $log->logdie( sprintf $ERR_CANT_WRITE, ( $fh->filename, $ERRNO ) );
         my %cache = %{ $self->_cache };
         $cache{ $self->label } = $fh->filename;
         $self->_cache( {%cache} );
@@ -171,7 +192,7 @@ patterns for use with TeX::Hyphen.
 
 =head1 VERSION
 
-This is version 0.03. To prevent plugging in of incompatible modules the
+This is version 0.04. To prevent plugging in of incompatible modules the
 version of the pluggable modules must be the same as this module.
 
 =head1 SYNOPSIS
@@ -254,7 +275,7 @@ Not all available pattern files are parsed correctly by L<TeX::Hyphen>.
 Versions up to and including 0.140 don't support C<utf8>, so patterns using
 C<utf8> that are included in this package have a version number 0.00 to ignore
 them. Should you patch L<TeX::Hyphen> yourself by inserting a C<binmode FILE,
-":utf8";> you can change those version numbers to 0.03 to include them.
+":utf8";> you can change those version numbers to 0.04 to include them.
 
 =back
 
@@ -289,19 +310,13 @@ issue. The empty subclass can't be empty, it needs at least:
 match on the string and picks what partly matches sorted, so using more exotic
 scripts this can go wrong badly.
 
-=item * Traditional German (L<TeX::Hyphen::Pattern::De_1901.pm>), Reformed
-German (L<TeX::Hyphen::Pattern::De_1996.pm>) and Swiss German
-(L<TeX::Hyphen::Pattern::De_ch_1901.pm>) fail for some reason and are not
-included in the package.
+=item * Esperanto (L<TeX::Hyphen::Pattern::Eo.pm>) fails for a known reason
+and is not included in the package. Should you need support for Esperanto
+write to L<tex-hyphen at tug.org>.
 
-=item * Hungarian (L<TeX::Hyphen::Pattern::Hu.pm>) fails for some reason and is not included in the
+=item * Coptic (L<TeX::Hyphen::Pattern::Cop.pm>) is a bit hard to test without
+a system that supports the fonts or encoding and is not included in the
 package.
-
-=item * Esperanto (L<TeX::Hyphen::Pattern::Eo.pm>) fails for some reason and is not included in the
-package.
-
-=item * Coptic (L<TeX::Hyphen::Pattern::Cop.pm>) is a bit hard to test without a system that
-supports the fonts or encoding and is not included in the package.
 
 =item * Building the catalog creates conflicting files on filesystems where
 F<En_us.pm> and F<En_US.pm> can't exist in the same directory (HFS+), so half

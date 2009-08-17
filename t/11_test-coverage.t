@@ -1,7 +1,7 @@
-# $Id: 11_test-coverage.t 22 2008-12-06 03:16:09Z roland $
-# $Revision: 22 $
-# $HeadURL: svn+ssh://ipenburg.xs4all.nl/srv/svnroot/debbie/trunk/Date-Extract-P800Picture/t/11_test-coverage.t $
-# $Date: 2008-12-06 04:16:09 +0100 (Sat, 06 Dec 2008) $
+# $Id: 11_test-coverage.t 112 2009-07-31 01:53:16Z roland $
+# $Revision: 112 $
+# $HeadURL: svn+ssh://ipenburg.xs4all.nl/srv/svnroot/rhonda/trunk/TeX-Hyphen-Pattern/t/11_test-coverage.t $
+# $Date: 2009-07-31 03:53:16 +0200 (Fri, 31 Jul 2009) $
 
 use Test::More;
 eval "use Test::TestCoverage 0.08";
@@ -9,10 +9,11 @@ plan skip_all => "Test::TestCoverage 0.08 required for testing test coverage"
   if $@;
 
 plan tests => 1;
-test_coverage("Date::Extract::P800Picture");
+test_coverage("TeX::Hyphen::Pattern");
 
-my $obj = Date::Extract::P800Picture->new();
-$obj->filename("8B481234.JPG");
-$obj->extract();
+my $obj = TeX::Hyphen::Pattern->new();
+$obj->label( q{nl} );
+$obj->filename();
+$obj->DESTROY();
 
-ok_test_coverage('Date::Extract::P800Picture');
+ok_test_coverage('TeX::Hyphen::Pattern');
